@@ -1,0 +1,151 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Sparkles, Send, Bot, User, Globe, ShieldCheck, Brain } from 'lucide-react';
+
+export default function SambitAIWebsite() {
+  const [messages, setMessages] = useState([
+    { sender: 'bot', text: 'Hello! Welcome to Sambit AI — your intelligent assistant for ideas, learning, and creativity.' }
+  ]);
+  const [input, setInput] = useState('');
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    const newMessages = [
+      ...messages,
+      { sender: 'user', text: input },
+      { sender: 'bot', text: `You asked: "${input}" — AI response demo generated successfully.` }
+    ];
+    setMessages(newMessages);
+    setInput('');
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white p-6">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-6xl mx-auto"
+      >
+        <header className="text-center mb-10">
+          <h1 className="text-5xl font-bold flex justify-center items-center gap-3">
+            <Sparkles className="w-10 h-10" /> Sambit AI
+          </h1>
+          <p className="text-slate-300 mt-3 text-lg">A futuristic free AI platform designed by Sambit Pani</p>
+        </header>
+
+        <div className="grid md:grid-cols-3 gap-6 mb-10">
+          <Card className="rounded-2xl shadow-xl bg-slate-900 border-slate-700">
+            <CardContent className="p-6">
+              <Brain className="mb-3" />
+              <h2 className="text-xl font-semibold">Smart Answers</h2>
+              <p className="text-slate-400">Fast AI responses for education, coding, writing, and ideas.</p>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-2xl shadow-xl bg-slate-900 border-slate-700">
+            <CardContent className="p-6">
+              <Globe className="mb-3" />
+              <h2 className="text-xl font-semibold">Global Access</h2>
+              <p className="text-slate-400">Free to use for everyone worldwide with simple interface.</p>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-2xl shadow-xl bg-slate-900 border-slate-700">
+            <CardContent className="p-6">
+              <ShieldCheck className="mb-3" />
+              <h2 className="text-xl font-semibold">Secure Design</h2>
+              <p className="text-slate-400">Modern clean architecture with future expansion ready.</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card className="rounded-2xl bg-slate-900 border-slate-700 shadow-2xl">
+          <CardContent className="p-6">
+            <div className="h-96 overflow-y-auto space-y-4 mb-4">
+              {messages.map((msg, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, x: msg.sender === 'user' ? 20 : -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div className={`max-w-[70%] p-3 rounded-2xl ${msg.sender === 'user' ? 'bg-blue-600' : 'bg-slate-700'}`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      {msg.sender === 'user' ? <User size={16} /> : <Bot size={16} />}
+                      <span className="text-sm font-medium">{msg.sender}</span>
+                    </div>
+                    <p>{msg.text}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask Sambit AI anything..."
+                className="bg-slate-800 border-slate-600 text-white"
+              />
+              <Button onClick={handleSend} className="rounded-xl">
+                <Send className="w-4 h-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <footer className="text-center mt-10 text-slate-400 text-sm">
+          © Sambit Pani Creator | All Rights Reserved 2026-27
+        </footer>
+      </motion.div>
+    </div>
+  );
+}
+
+
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload entire repository
+          path: '.'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
