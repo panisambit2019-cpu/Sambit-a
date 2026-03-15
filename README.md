@@ -1,2 +1,0 @@
-# Sambit-a
-Sambit Ai 
